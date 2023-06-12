@@ -27,8 +27,8 @@ const requests = {
 };
 
 const Auth = {
-  current: () =>    
-    requests.get('/users/:6'),
+  current: (token) =>    
+    requests.post('/users/me', {token}),
     //---------------------------------------------------/user
   login: (login, password) =>
     requests.post('/login', {  login, password  }),

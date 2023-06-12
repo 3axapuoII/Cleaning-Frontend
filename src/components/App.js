@@ -44,8 +44,8 @@ class App extends React.Component {
     if (token) {
       agent.setToken(token);
     }
-
-    this.props.onLoad(token ? agent.Auth.current() : null, token);
+    this.props.onLoad(token ? agent.Auth.current(token) : null, token);
+    
   }
 
   render() {

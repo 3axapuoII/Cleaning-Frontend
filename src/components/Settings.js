@@ -15,7 +15,7 @@ class SettingsForm extends React.Component {
     this.state = {
       image: '',
       username: '',
-      bio: '',
+      phone: '',
       email: '',
       password: ''
     };
@@ -43,7 +43,7 @@ class SettingsForm extends React.Component {
       Object.assign(this.state, {
         image: this.props.currentUser.image || '',
         username: this.props.currentUser.username,
-        bio: this.props.currentUser.bio,
+        phone: this.props.currentUser.phone,
         email: this.props.currentUser.email
       });
     }
@@ -54,7 +54,7 @@ class SettingsForm extends React.Component {
       this.setState(Object.assign({}, this.state, {
         image: nextProps.currentUser.image || '',
         username: nextProps.currentUser.username,
-        bio: nextProps.currentUser.bio,
+        phone: nextProps.currentUser.phone,
         email: nextProps.currentUser.email
       }));
     }
@@ -84,13 +84,13 @@ class SettingsForm extends React.Component {
           </fieldset>
 
           <fieldset className="form-group">
-            <textarea
+            <input
               className="form-control form-control-lg"
-              rows="8"
-              placeholder="Short bio about you"
-              value={this.state.bio}
-              onChange={this.updateState('bio')}>
-            </textarea>
+              type = "tel"
+              placeholder="Your phone number"
+              value={this.state.phone}
+              onChange={this.updateState('phone')}>
+            </input>
           </fieldset>
 
           <fieldset className="form-group">
@@ -132,7 +132,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
   onClickLogout: () => dispatch({ type: LOGOUT }),
   onSubmitForm: user =>
-    dispatch({ type: SETTINGS_SAVED, payload: agent.Auth.save(user) }),
+    dispatch({ type: SETTINGS_SAVED, payload: agent.Auth.save(window.localStorage.getItem('jwt'), user) }),
   onUnload: () => dispatch({ type: SETTINGS_PAGE_UNLOADED })
 });
 

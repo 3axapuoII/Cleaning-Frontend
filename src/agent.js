@@ -34,8 +34,8 @@ const Auth = {
     requests.post('/login', {  login, password  }),
   register: (login, password, email, firstName) =>
     requests.post('/register', { login, password, email, firstName }),
-  save: user =>
-    requests.patch('/users', { user })
+  save: (token, user) =>
+    requests.post('/users/edit', { token, user })
 };
 
 const Tags = {

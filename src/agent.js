@@ -84,7 +84,9 @@ const Profile = {
   get: username =>
     requests.get(`/profiles/${username}`),
   unfollow: username =>
-    requests.del(`/profiles/${username}/follow`)
+    requests.del(`/profiles/${username}/follow`),
+  contact: (login, email, text) =>
+    requests.post(`/message`, {login, email, text})
 };
 
 export default {

@@ -1,16 +1,53 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-
+/*
+import "./css/animate.css";
+import "./css/owl.carousel.min.css";
+import "./css/owl.theme.default.min.css";
+import "./css/magnific-popup.css";
+import "./css/flaticon.css";
+import "./css/style.css";
+*/
 const LoggedOutView = props => {
   if (!props.currentUser) {
     return (
-      <ul className="nav navbar-nav pull-xs-right">
+      <ul className="nav navbar-nav pull-xs-right ml-auto">
 
         <li className="nav-item">
           <Link to="/" className="nav-link">
             Home
           </Link>
         </li>
+{/*================================================================ */}
+        <li class="nav-item">
+          <Link to="/about" className="nav-link">
+            About
+            </Link>
+          </li>
+
+          <li class="nav-item">
+          <Link to="/services" className="nav-link">
+            Services
+            </Link>
+          </li>
+
+          <li class="nav-item">
+          <Link to="/portfolio" className="nav-link">
+            Our works
+            </Link>
+          </li>
+
+          <li class="nav-item">
+          <Link to="/prices" className="nav-link">
+            Prices
+            </Link>
+          </li>
+	         
+          <li class="nav-item">
+          <Link to="/contacts" className="nav-link">
+            Contacts
+            </Link>
+          </li>
 
         <li className="nav-item">
           <Link to="/login" className="nav-link">
@@ -41,9 +78,39 @@ const LoggedInView = props => {
           </Link>
         </li>
 
+        <li class="nav-item">
+          <Link to="/about" className="nav-link">
+            About
+            </Link>
+          </li>
+
+          <li class="nav-item">
+          <Link to="/services" className="nav-link">
+            Services
+            </Link>
+          </li>
+
+          <li class="nav-item">
+          <Link to="/portfolio" className="nav-link">
+            Our works
+            </Link>
+          </li>
+
+          <li class="nav-item">
+          <Link to="/prices" className="nav-link">
+            Prices
+            </Link>
+          </li>
+	         
+          <li class="nav-item">
+          <Link to="/contacts" className="nav-link">
+            Contacts
+            </Link>
+          </li>
+
         <li className="nav-item">
           <Link to="/editor" className="nav-link">
-            <i className="ion-compose"></i>&nbsp;New Post
+            <i className="ion-compose"></i>&nbsp;New Order
           </Link>
         </li>
 

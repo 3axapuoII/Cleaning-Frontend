@@ -64,32 +64,12 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
   onTabClick: (tab, pager, payload) => dispatch({ type: CHANGE_TAB, tab, pager, payload })
 });
-
+// className="hero-wrap js-fullheight" data-stellar-background-ratio="0.5"
 const MainView = props => {
   return (
-    <div className="col-md-9">
-      <div className="feed-toggle">
-        <ul className="nav nav-pills outline-active">
-
-          <YourFeedTab
-            token={props.token}
-            tab={props.tab}
-            onTabClick={props.onTabClick} />
-
-          <GlobalFeedTab tab={props.tab} onTabClick={props.onTabClick} />
-
-          <TagFilterTab tag={props.tag} />
-
-        </ul>
-      </div>
-
-      <ArticleList
-        pager={props.pager}
-        articles={props.articles}
-        loading={props.loading}
-        articlesCount={props.articlesCount}
-        currentPage={props.currentPage} />
-    </div>
+    /*<div  style={{ backgroundImage: "url(http://localhost:5555/avatars/bg_1.jpg)" }} >
+    </div>*/
+    <img src="http://localhost:5555/avatars/bg_3.jpg" alt=""></img>
   );
 };
 

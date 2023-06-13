@@ -6,6 +6,12 @@ import { APP_LOAD, REDIRECT } from '../constants/actionTypes';
 import { Route, Switch } from 'react-router-dom';
 import Article from '../components/Article';
 import Editor from '../components/Editor';
+import About from '../components/About';
+import Services from '../components/Services';
+import Portfolio from '../components/Portfolio';
+import Prices from '../components/Prices';
+import Contacts from '../components/Contacts';
+
 import Home from '../components/Home';
 import Login from '../components/Login';
 import Profile from '../components/Profile';
@@ -59,6 +65,12 @@ class App extends React.Component {
             <Route exact path="/" component={Home}/>
             <Route path="/login" component={Login} />
             <Route path="/register" component={Register} />
+            <Route path="/about" component = {About}/>
+            <Route path="/services" component = {Services}/>
+            <Route path="/portfolio" component = {Portfolio}/>
+            <Route path="/prices" component = {Prices}/>
+            <Route path="/contacts" component = {Contacts}/>
+
             <Route path="/editor/:slug" component={Editor} />
             <Route path="/editor" component={Editor} />
             <Route path="/article/:id" component={Article} />

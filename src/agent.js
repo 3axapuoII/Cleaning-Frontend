@@ -44,9 +44,12 @@ const Tags = {
 
 const limit = (count, p) => `limit=${count}&offset=${p ? p * count : 0}`;
 const omitSlug = article => Object.assign({}, article, { slug: undefined })
-const Articles = {
-  all: page =>
-    requests.get(`/articles?${limit(10, page)}`),
+
+const Services = {
+  all: () =>
+    requests.get(`/Rooms`),
+
+    
   byAuthor: (author, page) =>
     requests.get(`/articles?author=${encode(author)}&${limit(5, page)}`),
   byTag: (tag, page) =>
@@ -90,7 +93,7 @@ const Profile = {
 };
 
 export default {
-  Articles,
+  Services,
   Auth,
   Comments,
   Profile,

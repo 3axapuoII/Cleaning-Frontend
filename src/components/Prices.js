@@ -1,4 +1,4 @@
-import React from 'react';
+/*import React from 'react';
 
 const Prices = props => {
 
@@ -98,4 +98,119 @@ return(
 )
 }
 
-export default Prices;
+export default Prices;*/
+import React, { useState, useEffect } from 'react';
+import agent from '../agent';
+
+const ServiceTable = () => {
+  const [services, setServices] = useState([]);
+  const [totalPrice, setTotalPrice] = useState(0);
+
+  useEffect(() => {
+    fetchServices();
+  }, []);
+
+  const fetchServices = async () => {
+    try {
+      const response = await agent.Services.all();
+      console.log(response); // Замените на ваш эндпоинт для получения списка услуг
+      const servicesWithQuantity = response.map((service) => ({
+        ...service,
+        quantity: 0
+      }));
+      setServices(servicesWithQuantity);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleServiceSelect = (service) => {
+    setServices((prevServices) => {
+      const updatedServices = prevServices.map((prevService) =>
+        prevService.id === service.id ? { ...prevService, quantity: prevService.quantity + 1 } : prevService
+      );
+      calculateTotalPrice(updatedServices);
+      return updatedServices;
+    });
+  };
+
+  const handleQuantityChange = (serviceId, quantity) => {
+    setServices((prevServices) => {
+      const updatedServices = prevServices.map((prevService) =>
+        prevService.id === serviceId ? { ...prevService, quantity } : prevService
+      );
+      calculateTotalPrice(updatedServices);
+      return updatedServices;
+    });
+  };
+
+  const calculateTotalPrice = (updatedServices) => {
+    let total = 0;
+    updatedServices.forEach((service) => {
+      total += service.price * service.quantity;
+    });
+    setTotalPrice(total);
+  };
+
+  const handleSubmitOrder = async () => {
+    try {
+      if (window.localStorage.getItem('jwt')) {
+        const response = await agent; // Замените на ваш эндпоинт для добавления заказа
+        console.log('Order submitted:', response.data);
+        // Дополнительные действия после успешной отправки заказа
+      } else {
+        window.location.href = '/login';
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  return (
+    <div>
+      <table>
+        <thead>
+          <tr>
+            <th>Услуга</th>
+            <th>Цена</th>
+            <th>Количество</th>
+            <th>Выбрать</th>
+          </tr>
+        </thead>
+        <tbody>
+          {services.map((service) => (
+            <tr key={service.id}>
+              <td>{service.name}</td>
+              <td>{service.price}</td>
+              <td>
+                <input
+                  type="number"
+                  value={service.quantity || 0}
+                  onChange={(e) => handleQuantityChange(service.id, parseInt(e.target.value))}
+                />
+              </td>
+              <td>
+                <button onClick={() => handleServiceSelect(service)}>Добавить</button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      <div>
+        <h4>Выбранные услуги:</h4>
+        <ul>
+          {services.map((service) => (
+            <li key={service.id}>
+              {service.name} (Цена: {service.price}, Количество: {service.quantity})
+            </li>
+          ))}
+        </ul>
+        <p>Итоговая цена: {totalPrice}</p>
+        <button onClick={handleSubmitOrder}>Оплатить</button>
+      </div>
+    </div>
+  );
+};
+
+export default ServiceTable;

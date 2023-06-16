@@ -7,9 +7,11 @@ const Comments = ({ serviceId, currentUser }) => {
   const [currentUserCommentAuthors, setCurrentUserCommentAuthors] = useState([]);
   const [editingCommentId, setEditingCommentId] = useState(null);
   const [updatedCommentText, setUpdatedCommentText] = useState('');
+  const [serviceName, setServiceName] = useState('');
 
   useEffect(() => {
     fetchComments();
+    fetchServiceName();
   }, []);
 
   const fetchComments = async () => {
@@ -55,6 +57,15 @@ const Comments = ({ serviceId, currentUser }) => {
     return me && comment.userId === me.user.userId;
   };
 
+  const fetchServiceName = async () => {
+    try {
+      const response = await agent.Services.getService(serviceId);
+      setServiceName(response.name);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const handleDeleteComment = async (commentId) => {
     await agent.Comments.delete(commentId);
     setComments((prevComments) => prevComments.filter((comment) => comment.id !== commentId));
@@ -89,7 +100,7 @@ const Comments = ({ serviceId, currentUser }) => {
 
   return (
     <div>
-      <h3>Комментарии для услуги {serviceId}</h3>
+      <h3>Комментарии для услуги "{serviceName}"</h3>
       {comments === null ? (
         <p>Загрузка комментариев...</p>
       ) : (

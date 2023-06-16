@@ -65,9 +65,10 @@ const Services = {
 
   changeRating: (id, order) =>
   requests.post(`/Orders/${id}`, { order }),
-//==========================================================
-  del: slug =>
-    requests.del(`/articles/${slug}`),
+
+  getService: id =>
+    requests.get(`/CleaningJob/${id}`),
+//==========================================================    
   favorite: slug =>
     requests.post(`/articles/${slug}/favorite`),
   favoritedBy: (author, page) =>

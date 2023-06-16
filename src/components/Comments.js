@@ -53,8 +53,11 @@ const Comments = ({ serviceId, currentUser }) => {
   }, [comments]);
 
   const isCurrentUserCommentAuthor = async (comment) => {
-    const me = await agent.Auth.current(window.localStorage.getItem('jwt'));
-    return me && comment.userId === me.user.userId;
+    if(window.localStorage.getItem('jwt')){
+      const me = await agent.Auth.current(window.localStorage.getItem('jwt'));
+      return me && comment.userId === me.user.userId;
+    }
+    return false;
   };
 
   const fetchServiceName = async () => {

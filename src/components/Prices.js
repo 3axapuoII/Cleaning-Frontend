@@ -105,6 +105,7 @@ import agent from '../agent';
 const ServiceTable = () => {
   const [services, setServices] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
+  const [selectedServices, setSelectedServices] = useState([]);
 
   useEffect(() => {
     fetchServices();
@@ -113,7 +114,6 @@ const ServiceTable = () => {
   const fetchServices = async () => {
     try {
       const response = await agent.Services.all();
-      console.log(response); // Замените на ваш эндпоинт для получения списка услуг
       const servicesWithQuantity = response.map((service) => ({
         ...service,
         quantity: 0
@@ -125,28 +125,48 @@ const ServiceTable = () => {
   };
 
   const handleServiceSelect = (service) => {
-    setServices((prevServices) => {
-      const updatedServices = prevServices.map((prevService) =>
-        prevService.id === service.id ? { ...prevService, quantity: prevService.quantity + 1 } : prevService
+    if (selectedServices.some((selectedService) => selectedService.id === service.id)) {
+      // Если услуга уже выбрана, изменяем только количество
+      setSelectedServices((prevSelectedServices) =>
+        prevSelectedServices.map((selectedService) =>
+          selectedService.id === service.id ? { ...selectedService, quantity: selectedService.quantity + service.quantity } : selectedService
+        )
       );
-      calculateTotalPrice(updatedServices);
-      return updatedServices;
-    });
+    } else {
+      // Если услуга еще не выбрана, добавляем ее в список выбранных услуг
+      if(service.quantity!==0){
+      setSelectedServices((prevSelectedServices) => [...prevSelectedServices, { ...service }]);
+      }
+    };
+
+    setServices((prevSelectedServices) =>
+      prevSelectedServices.map((selectedService) =>
+        selectedService.id === service.id ? { ...selectedService, quantity:0 } : selectedService
+      )
+    );
+  };
+
+  const handleServiceDeselect = (service) => {
+    setSelectedServices((prevSelectedServices) =>
+      prevSelectedServices.filter((selectedService) => selectedService.id !== service.id)
+    );
   };
 
   const handleQuantityChange = (serviceId, quantity) => {
-    setServices((prevServices) => {
-      const updatedServices = prevServices.map((prevService) =>
-        prevService.id === serviceId ? { ...prevService, quantity } : prevService
-      );
-      calculateTotalPrice(updatedServices);
-      return updatedServices;
-    });
+    setServices((prevSelectedServices) =>
+      prevSelectedServices.map((selectedService) =>
+        selectedService.id === serviceId ? { ...selectedService, quantity } : selectedService
+      )
+    );
   };
 
-  const calculateTotalPrice = (updatedServices) => {
+  useEffect(() => {
+    calculateTotalPrice(selectedServices);
+  }, [selectedServices]);
+
+  const calculateTotalPrice = (selectedServices) => {
     let total = 0;
-    updatedServices.forEach((service) => {
+    selectedServices.forEach((service) => {
       total += service.price * service.quantity;
     });
     setTotalPrice(total);
@@ -155,8 +175,11 @@ const ServiceTable = () => {
   const handleSubmitOrder = async () => {
     try {
       if (window.localStorage.getItem('jwt')) {
-        const response = await agent; // Замените на ваш эндпоинт для добавления заказа
-        console.log('Order submitted:', response.data);
+        const services = selectedServices;
+        if(services.length>0){
+        const response = await agent.Services.add(window.localStorage.getItem('jwt'), services); // Замените на ваш эндпоинт для добавления заказа
+        setSelectedServices([]);
+        }
         // Дополнительные действия после успешной отправки заказа
       } else {
         window.location.href = '/login';
@@ -168,7 +191,7 @@ const ServiceTable = () => {
 
   return (
     <div>
-      <table>
+      <table className='table'>
         <thead>
           <tr>
             <th>Услуга</th>
@@ -185,6 +208,7 @@ const ServiceTable = () => {
               <td>
                 <input
                   type="number"
+                  min = "0"
                   value={service.quantity || 0}
                   onChange={(e) => handleQuantityChange(service.id, parseInt(e.target.value))}
                 />
@@ -200,9 +224,11 @@ const ServiceTable = () => {
       <div>
         <h4>Выбранные услуги:</h4>
         <ul>
-          {services.map((service) => (
+          {selectedServices.map((service) => (
             <li key={service.id}>
               {service.name} (Цена: {service.price}, Количество: {service.quantity})
+              {/* Здесь можно отображать комментарии для каждой услуги */}
+              <button onClick={() => handleServiceDeselect(service)}>Убрать</button>
             </li>
           ))}
         </ul>

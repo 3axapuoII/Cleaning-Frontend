@@ -48,7 +48,8 @@ const omitSlug = article => Object.assign({}, article, { slug: undefined })
 const Services = {
   all: () =>
     requests.get(`/Rooms`),
-
+  add: (token, services) =>
+  requests.post('/Orders/', { token, services }),
     
   byAuthor: (author, page) =>
     requests.get(`/articles?author=${encode(author)}&${limit(5, page)}`),

@@ -7,7 +7,7 @@ const Banner = ({ appName, token }) => {
   return (
     <div className="banner">
       <div className="container">
-        <h1 className="logo-font">
+        <h1 className="logo-font banner">
           {appName}
         </h1>
         <p>We will do the dirty work for you</p>

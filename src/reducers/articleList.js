@@ -73,8 +73,8 @@ export default (state = {}, action) => {
       return {
         ...state,
         pager: action.pager,
-        articles: action.payload[1].articles,
-        articlesCount: action.payload[1].articlesCount,
+        //articles: action.payload[1].articles,
+        //articlesCount: action.payload[1].articlesCount,
         currentPage: 0
       };
     case PROFILE_PAGE_UNLOADED:

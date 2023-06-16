@@ -51,10 +51,21 @@ const Services = {
   add: (token, services) =>
   requests.post('/Orders/', { token, services }),
     
-  byAuthor: (author, page) =>
-    requests.get(`/articles?author=${encode(author)}&${limit(5, page)}`),
-  byTag: (tag, page) =>
-    requests.get(`/articles?tag=${encode(tag)}&${limit(10, page)}`),
+
+  getOrders: (token) =>
+  requests.post('/Orders/all', { token }),
+
+
+  byAuthor: () =>
+    requests.get('/Basket'),
+    //console.log(author),
+
+  allServices: () =>
+    requests.get('/CleaningJob'),
+
+  changeRating: (id, order) =>
+  requests.post(`/Orders/${id}`, { order }),
+//==========================================================
   del: slug =>
     requests.del(`/articles/${slug}`),
   favorite: slug =>
@@ -71,11 +82,12 @@ const Services = {
     requests.put(`/articles/${article.slug}`, { article: omitSlug(article) }),
   create: article =>
     requests.post('/articles', { article })
+    //=========================================================================
 };
 
 const Comments = {
-  create: (slug, comment) =>
-    requests.post(`/articles/${slug}/comments`, { comment }),
+  create: (token, slug, comment) =>
+    requests.post(`/Review`, {token, slug, comment }),
   delete: (slug, commentId) =>
     requests.del(`/articles/${slug}/comments/${commentId}`),
   forArticle: slug =>
@@ -85,8 +97,8 @@ const Comments = {
 const Profile = {
   follow: username =>
     requests.post(`/profiles/${username}/follow`),
-  get: username =>
-    requests.get(`/profiles/${username}`),
+  get: token =>
+    requests.post('/User/me', token),
   unfollow: username =>
     requests.del(`/profiles/${username}/follow`),
   contact: (login, email, text) =>

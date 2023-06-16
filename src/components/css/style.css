@@ -70,7 +70,8 @@ hr {
 
 h1, h2, h3, h4, h5, h6 {
   margin-top: 0;
-  margin-bottom: 0.5rem; }
+  margin-bottom: 0.5rem;
+display: inline-block; }
 
 p {
   margin-top: 0;
@@ -8020,7 +8021,7 @@ a {
 h1, h2, h3, h4, h5,
 .h1, .h2, .h3, .h4, .h5 {
   line-height: 1.5;
-  color: #33313b;
+  /* color: #33313b; */
   font-weight: 400; }
 
 .wrap {

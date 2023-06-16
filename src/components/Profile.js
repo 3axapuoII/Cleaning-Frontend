@@ -1,170 +1,235 @@
-import ArticleList from './ArticleList';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import agent from '../agent';
 import { connect } from 'react-redux';
 import {
-  FOLLOW_USER,
-  UNFOLLOW_USER,
   PROFILE_PAGE_LOADED,
   PROFILE_PAGE_UNLOADED
 } from '../constants/actionTypes';
 
-const EditProfileSettings = props => {
-  if (props.isUser) {
-    return (
-      <Link
-        to="/settings"
-        className="btn btn-sm btn-outline-secondary action-btn">
-        <i className="ion-gear-a"></i> Edit Profile Settings
-      </Link>
-    );
+// Модель данных для таблицы Orders
+class Order {
+  constructor(id, userId, price, rating) {
+    this.id = id;
+    this.userId = userId;
+    this.price = price;
+    this.rating = rating;
+    this.services = [];
   }
-  return null;
-};
+}
 
-const FollowUserButton = props => {
-  if (props.isUser) {
-    return null;
+// Модель данных для таблицы OrdersServ
+class OrderService {
+  constructor(orderId, serviceId) {
+    this.orderId = orderId;
+    this.serviceId = serviceId;
+    this.comment = ''; // Добавлено поле comment
   }
+}
 
-  let classes = 'btn btn-sm action-btn';
-  if (props.user.following) {
-    classes += ' btn-secondary';
-  } else {
-    classes += ' btn-outline-secondary';
+// Модель данных для таблицы Services
+class Service {
+  constructor(id, name) {
+    this.id = id;
+    this.name = name;
   }
+}
 
-  const handleClick = ev => {
-    ev.preventDefault();
-    if (props.user.following) {
-      props.unfollow(props.user.username)
-    } else {
-      props.follow(props.user.username)
-    }
-  };
-
+const EditProfileSettings = () => {
   return (
-    <button
-      className={classes}
-      onClick={handleClick}>
-      <i className="ion-plus-round"></i>
-      &nbsp;
-      {props.user.following ? 'Unfollow' : 'Follow'} {props.user.username}
-    </button>
+    <Link to="/settings" className="btn btn-sm btn-outline-secondary action-btn">
+      <i className="ion-gear-a"></i> Edit Profile Settings
+    </Link>
   );
 };
 
-const mapStateToProps = state => ({
-  ...state.articleList,
-  currentUser: state.common.currentUser,
-  profile: state.profile
-});
+const Profile = (props) => {
+  const [orders, setOrders] = useState([]);
+  const [orderCounter, setOrderCounter] = useState(1);
+  const [showCommentInput, setShowCommentInput] = useState({});
 
-const mapDispatchToProps = dispatch => ({
-  onFollow: username => dispatch({
-    type: FOLLOW_USER,
-    payload: agent.Profile.follow(username)
-  }),
-  onLoad: payload => dispatch({ type: PROFILE_PAGE_LOADED, payload }),
-  onUnfollow: username => dispatch({
-    type: UNFOLLOW_USER,
-    payload: agent.Profile.unfollow(username)
-  }),
-  onUnload: () => dispatch({ type: PROFILE_PAGE_UNLOADED })
-});
+  useEffect(() => {
+    const fetchProfileData = async () => {
+      try {
+        const [ordersData, orderServicesData, servicesData] = await Promise.all([
+          getOrders(),
+          getOrderServices(),
+          getServices()
+        ]);
 
-class Profile extends React.Component {
-  componentWillMount() {
-    this.props.onLoad(Promise.all([
-      agent.Profile.get(this.props.match.params.username),
-      agent.Articles.byAuthor(this.props.match.params.username)
-    ]));
-  }
+        const orderMap = new Map();
 
-  componentWillUnmount() {
-    this.props.onUnload();
-  }
+        ordersData.forEach((order) => {
+          const { id, userId, price, review } = order;
+          const newOrder = new Order(id, userId, price, review);
+          orderMap.set(id, newOrder);
+        });
 
-  renderTabs() {
+        orderServicesData.forEach((orderService) => {
+          const { OrderId, ServiceId } = orderService;
+          const order = orderMap.get(OrderId);
+          if (order) {
+            order.services.push(new OrderService(OrderId, ServiceId));
+          }
+        });
+
+        servicesData.forEach((service) => {
+          const { id, name } = service;
+          orderMap.forEach((order) => {
+            order.services.forEach((orderService) => {
+              if (orderService.serviceId === id) {
+                orderService.name = name;
+                orderService.rating = order.rating;
+              }
+            });
+          });
+        });
+
+        const ordersArray = Array.from(orderMap.values());
+        setOrders(ordersArray);
+        setOrderCounter(1);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchProfileData();
+
+    return () => {
+      props.onUnload();
+    };
+  }, []);
+
+  const getOrders = async () => {
+    const orders = await agent.Services.getOrders(window.localStorage.getItem('jwt'));
+    return orders;
+  };
+
+  const getOrderServices = async () => {
+    const orderServices = await agent.Services.byAuthor();
+    return orderServices;
+  };
+
+  const getServices = async () => {
+    const services = await agent.Services.allServices();
+    return services;
+  };
+
+  const { currentUser } = props;
+
+  const handleRatingChange = (order, rating) => {
+    order.rating = rating;
+    agent.Services.changeRating(order.id, order);
+    setOrders([...orders]);
+  };
+
+  const handleCommentChange = (orderService, comment) => {
+    // orderService.comment = comment;
+    // setShowCommentInput({ ...showCommentInput, [orderService.serviceId]: false });
+    // setOrders([...orders]);
+    /*console.log(window.localStorage.getItem('jwt'));
+    console.log(orderService.serviceId);
+    console.log(comment);*/
+    agent.Comments.create(window.localStorage.getItem('jwt'), orderService.serviceId, comment);
+  };
+
+  const CommentInput = ({ orderService }) => {
+    const [comment, setComment] = useState('');
+
+    const handleSubmit = () => {
+      handleCommentChange(orderService, comment);
+      setShowCommentInput({ ...showCommentInput, [orderService.serviceId]: false });
+    };
+
     return (
-      <ul className="nav nav-pills outline-active">
-        <li className="nav-item">
-          <Link
-            className="nav-link active"
-            to={`/@${this.props.profile.username}`}>
-            My Articles
-          </Link>
-        </li>
-
-        <li className="nav-item">
-          <Link
-            className="nav-link"
-            to={`/@${this.props.profile.username}/favorites`}>
-            Favorited Articles
-          </Link>
-        </li>
-      </ul>
-    );
-  }
-
-  render() {
-    const profile = this.props.profile;
-    if (!profile) {
-      return null;
-    }
-
-    const isUser = this.props.currentUser &&
-      this.props.profile.username === this.props.currentUser.username;
-
-    return (
-      <div className="profile-page">
-
-        <div className="user-info">
-          <div className="container">
-            <div className="row">
-              <div className="col-xs-12 col-md-10 offset-md-1">
-
-                <img src={profile.image} className="user-img" alt={profile.username} />
-                <h4>{profile.username}</h4>
-                <p>{profile.bio}</p>
-
-                <EditProfileSettings isUser={isUser} />
-                <FollowUserButton
-                  isUser={isUser}
-                  user={profile}
-                  follow={this.props.onFollow}
-                  unfollow={this.props.onUnfollow}
-                  />
-
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="container">
-          <div className="row">
-
-            <div className="col-xs-12 col-md-10 offset-md-1">
-
-              <div className="articles-toggle">
-                {this.renderTabs()}
-              </div>
-
-              <ArticleList
-                pager={this.props.pager}
-                articles={this.props.articles}
-                articlesCount={this.props.articlesCount}
-                state={this.props.currentPage} />
-            </div>
-
-          </div>
-        </div>
-
+      <div>
+        <textarea
+          type="text"
+          value={comment}
+          onChange={(e) => setComment(e.target.value)}
+        />
+        <button onClick={handleSubmit}>Отправить</button>
       </div>
     );
-  }
-}
+  };
+
+  return (
+    <div className="profile-page">
+      <div className="user-info">
+        <div className="container">
+          <div className="row">
+            <div className="col-xs-12 col-md-10 offset-md-1">
+              <img src={currentUser.image} className="user-img" alt={currentUser.username} />
+              <h4>{currentUser.username}</h4>
+              <EditProfileSettings />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="user-info">
+        <h4>Ваши заказы:</h4>
+        <ul>
+          {orders.map((order, index) => {
+            return (
+              <li key={order.id}>
+                Номер заказа: {index + 1}<br />
+                Список услуг: <br />
+                {order.services.map((orderService) => (
+                  <div key={orderService.serviceId}>
+                    - {orderService.name}
+                    <br />
+                    {(
+                      <div>
+                        {!showCommentInput[orderService.serviceId] && (
+                          <button
+                            onClick={() =>
+                              setShowCommentInput({
+                                ...showCommentInput,
+                                [orderService.serviceId]: true
+                              })
+                            }
+                          >
+                            Добавить комментарий
+                          </button>
+                        )}
+                        {showCommentInput[orderService.serviceId] && (
+                          <CommentInput orderService={orderService} />
+                        )}
+                      </div>
+                    )}
+                    <br />
+                  </div>
+                ))}
+                Цена: {order.price}<br />
+                <span>Оценка: </span>
+                {[1, 2, 3, 4, 5].map((rating) => (
+                  <span
+                    key={rating}
+                    onClick={() => handleRatingChange(order, rating)}
+                    style={{ color: rating <= order.rating ? 'yellow' : 'gray', cursor: 'pointer' }}
+                  >
+                    <h1>★</h1>
+                  </span>
+                ))}
+                <br /><br />
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    </div>
+  );
+};
+
+const mapStateToProps = (state) => ({
+  currentUser: state.common.currentUser,
+  profile: state.profile,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  onLoad: (payload) => dispatch({ type: PROFILE_PAGE_LOADED, payload }),
+  onUnload: () => dispatch({ type: PROFILE_PAGE_UNLOADED }),
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(Profile);
 export { Profile, mapStateToProps };

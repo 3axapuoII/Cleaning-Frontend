@@ -16,6 +16,9 @@ const Contacts = props => {
         agent.Profile.contact(name, email, message)
         .then(response => {
           console.log('Сообщение отправлено успешно');
+		  setName("");
+		  setEmail("");
+		  setMessage("");
         })
         .catch(error => {
           console.error('Ошибка при отправке сообщения:', error);

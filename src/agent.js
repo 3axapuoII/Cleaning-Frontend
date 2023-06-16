@@ -88,15 +88,17 @@ const Services = {
 const Comments = {
   create: (token, slug, comment) =>
     requests.post(`/Review`, {token, slug, comment }),
-  delete: (slug, commentId) =>
-    requests.del(`/articles/${slug}/comments/${commentId}`),
-  forArticle: slug =>
-    requests.get(`/articles/${slug}/comments`)
+  delete: (commentId) =>
+    requests.del(`/Review/${commentId}`),
+  forService: (slug) =>
+    requests.get(`/Review/${slug}`),
+  update: (slug, text) =>
+    requests.post(`/Review/${slug}`, {text})
 };
 
 const Profile = {
-  follow: username =>
-    requests.post(`/profiles/${username}/follow`),
+  getInfo: userId =>
+    requests.get(`/users/${userId}`),
   get: token =>
     requests.post('/User/me', token),
   unfollow: username =>

@@ -1,105 +1,5 @@
-/*import React from 'react';
-
-const Prices = props => {
-
-return(		
-	
-	<section class="ftco-section bg-light">
-    	<div class="container">
-    		<div class="row justify-content-center pb-5 mb-3">
-          <div class="col-md-7 heading-section text-center ftco-animate">
-          	<span class="subheading mb-3">Цена &amp; Плата</span>
-            <h2>ВЫБЕРИТЕ ПОДХОДЯЩИЙ ТАРИФ</h2>
-          </div>
-        </div>
-    		<div class="row">
-    			<div class="col-md-6 col-lg-3 ftco-animate">
-	          <div class="block-7">
-	            <div class="text-center">
-	            	<div class="icon d-flex align-items-center justify-content-center"><span class="fa flaticon-sprayer"></span></div>
-	            	<h4 class="heading-2">Стартовый</h4>
-		            <span class="price"><sup>$</sup> <span class="number">49</span></span>
-		            
-		            <ul class="pricing-text mb-5">
-		              <li><span class="fa fa-check mr-2"></span>Протираем все доступные поверхности</li>
-		              <li><span class="fa fa-check mr-2"></span>Пылесосим</li>
-		              <li><span class="fa fa-check mr-2"></span>Моем пол специальными средствами</li>
-		             
-		            </ul>
-
-		            <a href="#" class="btn btn-primary px-4 py-3">Выбрать</a>
-	            </div>
-	          </div>
-	        </div>
-	        <div class="col-md-6 col-lg-3 ftco-animate">
-	          <div class="block-7 active">
-	            <div class="text-center">
-	            <div class="icon d-flex align-items-center justify-content-center"><span class="fa flaticon-vacuum-cleaner"></span></div>
-            	<h4 class="heading-2">Стандарт</h4>
-	            <span class="price"><sup>$</sup> <span class="number">79</span></span>
-	            
-	            <ul class="pricing-text mb-5">
-		              <li><span class="fa fa-check mr-2"></span>Вывозим мусор</li>
-		              <li><span class="fa fa-check mr-2"></span>Моем окна и витражи</li>
-		              <li><span class="fa fa-check mr-2"></span>Протираем все доступные поверхности</li>
-		              <li><span class="fa fa-check mr-2"></span>Убираем строительным пылесосом</li>
-		              <li><span class="fa fa-check mr-2"></span>Моем пол специальными средствами</li>
-		            </ul>
-
-	            <a href="#" class="btn btn-primary px-4 py-3">Выбрать</a>
-	            </div>
-	          </div>
-	        </div>
-	        <div class="col-md-6 col-lg-3 ftco-animate">
-	          <div class="block-7">
-	            <div class="text-center">
-	            	<div class="icon d-flex align-items-center justify-content-center"><span class="fa flaticon-tap"></span></div>
-            	<h4 class="heading-2">Премиум</h4>
-	            <span class="price"><sup>$</sup> <span class="number">109</span></span>
-	            
-	            <ul class="pricing-text mb-5">
-		              <li><span class="fa fa-check mr-2"></span>Вывозим мусор</li>
-		              <li><span class="fa fa-check mr-2"></span>Моем окна и витражи</li>
-		              <li><span class="fa fa-check mr-2"></span>Убираем строительным пылесосом</li>
-		              <li><span class="fa fa-check mr-2"></span>Удаляем наклейки с окон и дверей</li>
-		              <li><span class="fa fa-check mr-2"></span>Моем пол специальными средствами</li>
-					  <li><span class="fa fa-check mr-2"></span>Протираем все доступные поверхности</li>
-		            </ul>
-
-	            <a href="#" class="btn btn-primary px-4 py-3">Выбрать</a>
-	            </div>
-	          </div>
-	        </div>
-	        <div class="col-md-6 col-lg-3 ftco-animate">
-	          <div class="block-7">
-	            <div class="text-center">
-	            	<div class="icon d-flex align-items-center justify-content-center"><span class="fa flaticon-cleaning"></span></div>
-            	<h4 class="heading-2">Платинум</h4>
-	            <span class="price"><sup>$</sup> <span class="number">159</span></span>
-	            
-	            <ul class="pricing-text mb-5">
-		              <li><span class="fa fa-check mr-2"></span>Вывозим мусор</li>
-		              <li><span class="fa fa-check mr-2"></span>Моем окна и витражи</li>
-		              <li><span class="fa fa-check mr-2"></span>Убираем строительным пылесосом</li>
-		              <li><span class="fa fa-check mr-2"></span>Удаляем наклейки с окон и дверей</li>
-		              <li><span class="fa fa-check mr-2"></span>Моем пол специальными средствами</li>
-					  <li><span class="fa fa-check mr-2"></span>Протираем все доступные поверхности</li>
-					  <li><span class="fa fa-check mr-2"></span>Мойка изделия с использованием специализированных моющих средств</li>
-		            </ul>
-
-	            <a href="#" class="btn btn-primary px-4 py-3">Выборать</a>
-	            </div>
-	          </div>
-	        </div>
-	      </div>
-    	</div>
-    </section>
-
-)
-}
-
-export default Prices;*/
 import React, { useState, useEffect } from 'react';
+import { BrowserRouter } from 'react-router-dom';
 import agent from '../agent';
 
 const ServiceTable = () => {
@@ -126,22 +26,20 @@ const ServiceTable = () => {
 
   const handleServiceSelect = (service) => {
     if (selectedServices.some((selectedService) => selectedService.id === service.id)) {
-      // Если услуга уже выбрана, изменяем только количество
       setSelectedServices((prevSelectedServices) =>
         prevSelectedServices.map((selectedService) =>
           selectedService.id === service.id ? { ...selectedService, quantity: selectedService.quantity + service.quantity } : selectedService
         )
       );
     } else {
-      // Если услуга еще не выбрана, добавляем ее в список выбранных услуг
-      if(service.quantity!==0){
-      setSelectedServices((prevSelectedServices) => [...prevSelectedServices, { ...service }]);
+      if (service.quantity !== 0) {
+        setSelectedServices((prevSelectedServices) => [...prevSelectedServices, { ...service }]);
       }
-    };
+    }
 
     setServices((prevSelectedServices) =>
       prevSelectedServices.map((selectedService) =>
-        selectedService.id === service.id ? { ...selectedService, quantity:0 } : selectedService
+        selectedService.id === service.id ? { ...selectedService, quantity: 0 } : selectedService
       )
     );
   };
@@ -176,11 +74,10 @@ const ServiceTable = () => {
     try {
       if (window.localStorage.getItem('jwt')) {
         const services = selectedServices;
-        if(services.length>0){
-        const response = await agent.Services.add(window.localStorage.getItem('jwt'), services); // Замените на ваш эндпоинт для добавления заказа
-        setSelectedServices([]);
+        if (services.length > 0) {
+          const response = await agent.Services.add(window.localStorage.getItem('jwt'), services);
+          setSelectedServices([]);
         }
-        // Дополнительные действия после успешной отправки заказа
       } else {
         window.location.href = '/login';
       }
@@ -189,53 +86,63 @@ const ServiceTable = () => {
     }
   };
 
-  return (
-    <div>
-      <table className='table'>
-        <thead>
-          <tr>
-            <th>Услуга</th>
-            <th>Цена</th>
-            <th>Количество</th>
-            <th>Выбрать</th>
-          </tr>
-        </thead>
-        <tbody>
-          {services.map((service) => (
-            <tr key={service.id}>
-              <td>{service.name}</td>
-              <td>{service.price}</td>
-              <td>
-                <input
-                  type="number"
-                  min = "0"
-                  value={service.quantity || 0}
-                  onChange={(e) => handleQuantityChange(service.id, parseInt(e.target.value))}
-                />
-              </td>
-              <td>
-                <button onClick={() => handleServiceSelect(service)}>Добавить</button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+  const handleViewComments = (serviceId) => {
+    // Здесь добавьте логику для обработки нажатия кнопки "Посмотреть комментарии"
+    window.location.href = `/comments/${serviceId}`;
+  };
 
+  return (
+    <BrowserRouter>
       <div>
-        <h4>Выбранные услуги:</h4>
-        <ul>
-          {selectedServices.map((service) => (
-            <li key={service.id}>
-              {service.name} (Цена: {service.price}, Количество: {service.quantity})
-              {/* Здесь можно отображать комментарии для каждой услуги */}
-              <button onClick={() => handleServiceDeselect(service)}>Убрать</button>
-            </li>
-          ))}
-        </ul>
-        <p>Итоговая цена: {totalPrice}</p>
-        <button onClick={handleSubmitOrder}>Оплатить</button>
+        <table className="table">
+          <thead>
+            <tr>
+              <th>Услуга</th>
+              <th>Цена</th>
+              <th>Количество</th>
+              <th>Комментарии</th>
+              <th>Выбрать</th>
+            </tr>
+          </thead>
+          <tbody>
+            {services.map((service) => (
+              <tr key={service.id}>
+                <td>{service.name}</td>
+                <td>{service.price}</td>
+                <td>
+                  <input
+                    type="number"
+                    min="0"
+                    value={service.quantity}
+                    onChange={(e) => handleQuantityChange(service.id, Number(e.target.value))}
+                  />
+                </td>
+                <td>
+                  <button onClick={() => handleViewComments(service.id)}>Посмотреть комментарии</button>
+                </td>
+                <td>
+                  <button onClick={() => handleServiceSelect(service)}>Добавить</button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        <div>
+          <h3>Выбранные услуги</h3>
+          <ul>
+            {selectedServices.map((service) => (
+              <li key={service.id}>
+                {service.name} - {service.quantity}
+                <button onClick={() => handleServiceDeselect(service)}>Удалить</button>
+              </li>
+            ))}
+          </ul>
+          <p>Общая стоимость: {totalPrice}</p>
+          <button onClick={handleSubmitOrder}>Оформить заказ</button>
+        </div>
       </div>
-    </div>
+    </BrowserRouter>
   );
 };
 

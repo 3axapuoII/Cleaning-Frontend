@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import ListErrors from './ListErrors';
-import React from 'react';
+import React, { useState } from 'react';
 import agent from '../agent';
 import { connect } from 'react-redux';
 import {
@@ -26,88 +26,101 @@ const mapDispatchToProps = dispatch => ({
     dispatch({ type: REGISTER_PAGE_UNLOADED })
 });
 
-class Register extends React.Component {
-  constructor() {
-    super();
-    this.changeEmail = ev => this.props.onChangeEmail(ev.target.value);
-    this.changePassword = ev => this.props.onChangePassword(ev.target.value);
-    this.changeUsername = ev => this.props.onChangeUsername(ev.target.value);
-    this.submitForm = (username, email, password) => ev => {
-      ev.preventDefault();
-      this.props.onSubmit(username, email, password, username);
+const Register = props => {
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [usernameError, setUsernameError] = useState(false);
+  const [emailError, setEmailError] = useState(false);
+  const [passwordError, setPasswordError] = useState(false);
+
+  const handleChangeUsername = e => {
+    setUsername(e.target.value);
+    setUsernameError(false);
+  };
+
+  const handleChangeEmail = e => {
+    setEmail(e.target.value);
+    setEmailError(false);
+  };
+
+  const handleChangePassword = e => {
+    setPassword(e.target.value);
+    setPasswordError(false);
+  };
+
+  const handleSubmit = e => {
+    e.preventDefault();
+    if (!username) {
+      setUsernameError(true);
     }
-  }
+    if (!email) {
+      setEmailError(true);
+    }
+    if (!password) {
+      setPasswordError(true);
+    }
+    if (username && email && password) {
+      props.onSubmit(username, email, password);
+    }
+  };
 
-  componentWillUnmount() {
-    this.props.onUnload();
-  }
-
-  render() {
-    const email = this.props.email;
-    const password = this.props.password;
-    const username = this.props.username;
-
-    return (
-      <div className="auth-page">
-        <div className="container page">
-          <div className="row">
-
-            <div className="col-md-6 offset-md-3 col-xs-12">
-              <h1 className="text-xs-center banner">Sign Up</h1>
-              <p className="text-xs-center">
-                <Link to="/login">
-                  Have an account?
-                </Link>
-              </p>
-
-              <ListErrors errors={this.props.errors} />
-
-              <form onSubmit={this.submitForm(username, email, password)}>
-                <fieldset>
-
-                  <fieldset className="form-group">
-                    <input
-                      className="form-control form-control-lg"
-                      type="text"
-                      placeholder="Username"
-                      value={this.props.username}
-                      onChange={this.changeUsername} />
-                  </fieldset>
-
-                  <fieldset className="form-group">
-                    <input
-                      className="form-control form-control-lg"
-                      type="email"
-                      placeholder="Email"
-                      value={this.props.email}
-                      onChange={this.changeEmail} />
-                  </fieldset>
-
-                  <fieldset className="form-group">
-                    <input
-                      className="form-control form-control-lg"
-                      type="password"
-                      placeholder="Password"
-                      value={this.props.password}
-                      onChange={this.changePassword} />
-                  </fieldset>
-
-                  <button
-                    className="btn btn-lg btn-primary pull-xs-right"
-                    type="submit"
-                    disabled={this.props.inProgress}>
-                    Sign up
-                  </button>
-
+  return (
+    <div className="auth-page">
+      <div className="container page">
+        <div className="row">
+          <div className="col-md-6 offset-md-3 col-xs-12">
+            <h1 className="text-xs-center banner">Sign Up</h1>
+            <p className="text-xs-center">
+              <Link to="/login">Have an account?</Link>
+            </p>
+            <ListErrors errors={props.errors} />
+            <form onSubmit={handleSubmit}>
+              <fieldset>
+                <fieldset className="form-group">
+                  <input
+                    className={`form-control form-control-lg ${usernameError ? 'is-invalid' : ''}`}
+                    type="text"
+                    placeholder="Username"
+                    value={username}
+                    onChange={handleChangeUsername}
+                  />
+                  {usernameError && <div className="invalid-feedback">Заполните это поле</div>}
                 </fieldset>
-              </form>
-            </div>
-
+                <fieldset className="form-group">
+                  <input
+                    className={`form-control form-control-lg ${emailError ? 'is-invalid' : ''}`}
+                    type="email"
+                    placeholder="Email"
+                    value={email}
+                    onChange={handleChangeEmail}
+                  />
+                  {emailError && <div className="invalid-feedback">Заполните это поле</div>}
+                </fieldset>
+                <fieldset className="form-group">
+                  <input
+                    className={`form-control form-control-lg ${passwordError ? 'is-invalid' : ''}`}
+                    type="password"
+                    placeholder="Password"
+                    value={password}
+                    onChange={handleChangePassword}
+                  />
+                  {passwordError && <div className="invalid-feedback">Заполните это поле</div>}
+                </fieldset>
+                <button
+                  className="btn btn-lg btn-primary pull-xs-right"
+                  type="submit"
+                  disabled={props.inProgress}
+                >
+                  Sign up
+                </button>
+              </fieldset>
+            </form>
           </div>
         </div>
       </div>
-    );
-  }
-}
+    </div>
+  );
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(Register);
